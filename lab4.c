@@ -18,7 +18,7 @@ pthread_cond_t x_cond;
 void *thread1 (void *t) {
   int boba1, boba2;
 
-  printf("A: Comecei\n");
+  printf("thread1: Comecei\n");
   
   /* faz alguma coisa pra gastar tempo... */
   boba1=10000; boba2=-10000; while (boba2 < boba1) boba2++;
@@ -37,7 +37,7 @@ void *thread1 (void *t) {
 
 /* Thread B */
 void *thread2 (void *t) {
-  printf("B: Comecei\n");
+  printf("thread2: Comecei\n");
   
   pthread_mutex_lock(&x_mutex);
   if (x < 1) { 
