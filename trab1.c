@@ -50,10 +50,26 @@ void randomize(int vetor[], int tamanho) {
     }
 }
 
+//realiza a busca sequencial
+void buscaSequencial(int vetor[]) {
+	bool achou = false;
+	for(int i = 0; i < tVetor; i++) {
+		if(vetor[i] == nBusca) {
+			achou = true;
+			printf("Numero %lld achado na posicao %d\n", nBusca, i);
+		}
+	}
+	if(achou == false) {
+		printf("Numero nao encontrado.\n");
+	}
+}
+	
+
+
 //fluxo principal
 int main(int argc, char* argv[]) {
    pthread_t *tid; //identificadores das threads no sistema
-   double inicio, fim, delta; // variaveis para calculo de tempo
+   double inicio, fim, delta, tSeq, tConc; // variaveis para calculo de tempo
    int escolha;
       
 
@@ -102,9 +118,18 @@ int main(int argc, char* argv[]) {
   }
   printf("}");
    printf("\n");*/ 
- 
+   
+   
+   //algoritmo sequencial de busca
+   printf("Realizando a busca sequencial...\n");
+   GET_TIME(inicio);
+   buscaSequencial(vet);
+   GET_TIME(fim);
+   tSeq = fim-inicio;
+   printf("Tempo de Busca Sequencial: %lf\n\n\n", tSeq);
    //criacao das threads
    GET_TIME(inicio);
+   printf("Realizando busca concorrente...\n");
    for(long int i=0; i<nthreads; i++) {
       if(pthread_create(tid+i, NULL, tarefa, (void*) i)){
          puts("ERRO--pthread_create"); return 3;
@@ -118,9 +143,8 @@ int main(int argc, char* argv[]) {
 	printf("Numero nao existente\n");
 	}
    GET_TIME(fim)   
-   delta = fim - inicio;
-   printf("\n");
-   printf("Tempo de Busca: %lf\n", delta);
+   tConc = fim - inicio;
+   printf("Tempo de Busca Concorrente: %lf\n", tConc);
 
    //exibicao dos resultados
    /*puts("Vetor de saida:");
@@ -136,7 +160,8 @@ int main(int argc, char* argv[]) {
    GET_TIME(fim)   
    delta = fim - inicio;
    printf("\n");
-   printf("Tempo finalizacao:%lf\n", delta);
-
+   printf("Tempo finalizacao:%lf\n\n", delta);
+   double desempenho = tSeq/tConc;
+   printf("Desempenho: %lf\n", desempenho);
    return 0;
 }
