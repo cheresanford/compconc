@@ -145,12 +145,10 @@ int main(int argc, char* argv[]) {
    for(int i=0; i<nthreads; i++) {
       pthread_join(*(tid+i), NULL);
    }
-   if(!achou){
-	printf("Numero nao existente\n");
-	}
    
    //imprime em qual posicao foi achado o numero
-   printf("Numero %lld achado na posicao %lld\n", nBusca, pos);
+   if (achou) printf("Numero %lld achado na posicao %lld\n", nBusca, pos);
+   else printf("Numero nao existente\n");
    
    //contagem do tempo concorrente
    GET_TIME(fim)   
