@@ -9,9 +9,8 @@ int *vet; //vetor de entrada
 long long int tVetor; //tamanho do vetor escolhido pelo usuario
 int nthreads; //numero de threads
 long long int nBusca; //numero a ser buscado
-bool achou = false;
-pthread_mutex_t mutex;
-
+bool achou = false; //variavel para indicar se a thread achou o numero informado pelo usuario para busca
+long long int pos; //posicao do vetor em que foi encontrado o numero
 
 //funcao que as threads executarao
 void * tarefa(void *arg) {
@@ -26,8 +25,9 @@ void * tarefa(void *arg) {
    
         if(vet[i] == nBusca){
         	achou = true;
-        	printf("Numero %lld achado na posicao %ld\n", nBusca, i);
-        }	
+        	pos = i;
+        }
+        if(achou) break;	
 	
    }     	
    pthread_exit(NULL);
@@ -111,13 +111,17 @@ int main(int argc, char* argv[]) {
   scanf("%d", &escolha);
   if(escolha == 1) {nBusca = vet[tVetor-1];}
 
-  	
- /* printf("{ ");
-   for(int i=0; i<tVetor; i++) {     
-     printf("[%d] ", vet[i]);
-  }
-  printf("}");
-   printf("\n");*/ 
+  //exibicao dos resultados para verificar corretude	
+   printf("Deseja imprimir o vetor? <1> Sim <2> Nao\n");
+   scanf("%d", &escolha);
+   if(escolha == 1) {
+	   printf("{ ");
+	   for(int i=0; i<tVetor; i++) {     
+	     printf("[%d] ", vet[i]);
+	  }
+	   printf("}");
+	   printf("\n"); 
+   }
    
    
    //algoritmo sequencial de busca
@@ -127,6 +131,7 @@ int main(int argc, char* argv[]) {
    GET_TIME(fim);
    tSeq = fim-inicio;
    printf("Tempo de Busca Sequencial: %lf\n\n\n", tSeq);
+   
    //criacao das threads
    GET_TIME(inicio);
    printf("Realizando busca concorrente...\n");
@@ -134,7 +139,8 @@ int main(int argc, char* argv[]) {
       if(pthread_create(tid+i, NULL, tarefa, (void*) i)){
          puts("ERRO--pthread_create"); return 3;
       }
-   } 
+   }
+    
    //espera pelo termino da threads
    for(int i=0; i<nthreads; i++) {
       pthread_join(*(tid+i), NULL);
@@ -142,16 +148,14 @@ int main(int argc, char* argv[]) {
    if(!achou){
 	printf("Numero nao existente\n");
 	}
+   
+   //imprime em qual posicao foi achado o numero
+   printf("Numero %lld achado na posicao %lld\n", nBusca, pos);
+   
+   //contagem do tempo concorrente
    GET_TIME(fim)   
    tConc = fim - inicio;
    printf("Tempo de Busca Concorrente: %lf\n", tConc);
-
-   //exibicao dos resultados
-   /*puts("Vetor de saida:");
-   for(int j=0; j<dim; j++)
-      printf("%.1f ", saida[j]);
-   puts("");
-   */
 
    //liberacao da memoria
    GET_TIME(inicio);
